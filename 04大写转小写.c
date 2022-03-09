@@ -7,6 +7,7 @@
 ***************************************************/
 
 #include <stdio.h>
+//lizhuo
 char toLower(char ch)
 {
 	return ch-'A'+'a';
