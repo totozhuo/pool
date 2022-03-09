@@ -20,5 +20,6 @@ int main(int argc,const char* argv[])
 	scanf("%c",&ch);
 
 	printf("%c\n",toLower(ch));
-    return 0;
+    //goutao
+	return 0;
 }
