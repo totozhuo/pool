@@ -10,7 +10,7 @@
 //lizhuo
 char toLower(char ch)
 {
-	return ch-'A'+'a';
+	return ch-'A'+'a'-'c';
 }
 
 int main(int argc,const char* argv[])
