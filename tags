@@ -1,0 +1,50 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+AddNemfood	function.c	/^void  AddNemfood(USE *use,int accfd)$/;"	f
+Addfood	function.c	/^void  Addfood(USE *use,int accfd)$/;"	f
+HEAD	function.h	/^}HEAD;$/;"	t	typeref:struct:__anon2
+Input_Foot	function.c	/^void Input_Foot(USE *use, HEAD *head,int accfd)$/;"	f
+Input_Newfoot	function.c	/^void Input_Newfoot(USE *use, HEAD *head,int accfd)$/;"	f
+Inster	function.c	/^void Inster(USE *use,int accfd)$/;"	f
+Line	function.c	/^void Line()$/;"	f
+Log_In_Find	function.c	/^void Log_In_Find(USE *use,int accfd)$/;"	f
+Output_Foot	function.c	/^void Output_Foot(USE *use, HEAD *head,int accfd)$/;"	f
+Read	function.c	/^int Read(int sockfd)$/;"	f
+Register	function.c	/^void Register(HEAD *p,int accfd)$/;"	f
+Sign_In	function.c	/^void Sign_In(HEAD *p,int accfd)$/;"	f
+Slip	function.c	/^void Slip(char *p)$/;"	f
+Time	function.c	/^char* Time()$/;"	f
+USE	function.h	/^}USE;$/;"	t	typeref:struct:__anon1
+Write	function.c	/^void Write(char *buf,int sockfd)$/;"	f
+_FUNCTION_H_	function.h	12;"	d
+_HEAD_H_	head.h	12;"	d
+batch	function.h	/^	int batch;	\/\/批次$/;"	m	struct:__anon1
+count	function.h	/^	int count;$/;"	m	struct:__anon1
+data	function.h	/^	int data;$/;"	m	struct:node
+day	function.h	/^	int day;	\/\/保质期$/;"	m	struct:__anon1
+is_empty	function.c	/^int is_empty(struct node *queue)$/;"	f
+main	123.c	/^int main(int argc,const char* argv[])$/;"	f
+main	client.c	/^int main()$/;"	f
+main	server.c	/^int main()$/;"	f
+mysql	client.c	/^MYSQL mysql;$/;"	v
+mysql	server.c	/^MYSQL mysql;$/;"	v
+name	function.h	/^	char name[30];$/;"	m	struct:__anon1
+next	function.h	/^	struct node *next;$/;"	m	struct:node	typeref:struct:node::node
+node	function.h	/^struct node$/;"	s
+password	function.h	/^	char password[30];$/;"	m	struct:__anon1
+place	function.h	/^	int place;	\/\/位置$/;"	m	struct:__anon1
+pop_queue	function.c	/^int pop_queue(struct node *queue)$/;"	f
+push_queue	function.c	/^void push_queue(struct node *queue,int data)$/;"	f
+putgoods	function.h	/^	int putgoods;  \/\/出货$/;"	m	struct:__anon1
+sem	client.c	/^sem_t sem;$/;"	v
+sem	server.c	/^sem_t sem;$/;"	v
+socket_init_sockfd	function.c	/^int socket_init_sockfd(int sockfd)$/;"	f
+thread	function.c	/^void *thread(void *arg)$/;"	f
+time1	function.h	/^	int time1;$/;"	m	struct:__anon1
+time2	function.h	/^	int time2;$/;"	m	struct:__anon1
+type	function.h	/^	int type;	$/;"	m	struct:__anon2
+username	function.h	/^	char username[30];$/;"	m	struct:__anon1
