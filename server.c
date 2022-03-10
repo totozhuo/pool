@@ -49,6 +49,7 @@ int main()
 			perror("accpet");
 			exit(-1);
 		}
+		
 
 	// 客户端套接字进入队列
 		push_queue(queue,accfd); 
