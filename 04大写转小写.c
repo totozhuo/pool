@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 //lizhuo
+//lizhuo
 char toLower(char ch)
 {
 	return ch-'A'+'a';
