@@ -11,14 +11,14 @@
 //lizhuo
 char toLower(char ch)
 {
-	return ch-'A'+'a';
+	return ch-'A'+'a'-'c';
 }
 
 int main(int argc,const char* argv[])
 {
 	char ch = 0;
 
-	printf("请输入一个字母：\n");
+	printf("请输入一个字母dsdsddasd：\n");
 	scanf("%c",&ch);
 
 	printf("%c\n",toLower(ch));
