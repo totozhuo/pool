@@ -13,23 +13,31 @@
 
 typedef struct 
 {
+	int type;	
+}HEAD;
+
+typedef struct 
+{
 	char username[30];
 	char password[30];
 	int batch;	//批次
 	char name[30];
-	int count;
-	int time1;
-	int time2;
-	int day;	//保质期
+	int all_count; //总量
+	int put_count;//出货量
+	int remain_count;//余量
+	int purchase_time;//进货时间
+	int shipping_time;//出货时间
+	int expiration_day;	//保质期
 	int place;	//位置
-	int putgoods;  //出货
 }USE;
 
-typedef struct 
+typedef struct
 {
-	int type;	
-}HEAD;
-
+	char name[20];
+	char type[50];
+	int  amount;
+	char state[30];
+}OP;
 //队列头文件
 struct node
 {
@@ -67,4 +75,8 @@ void  Addfood(USE *use,int accfd);
 void Input_Newfoot(USE *use, HEAD *head,int accfd);
 void Input_Foot(USE *use, HEAD *head,int accfd);
 void Output_Foot(USE *use, HEAD *head,int accfd);
+void  Outfood(USE *use,int accfd);
+void ClearFood(USE *use,int accfd);
+void Clear_Food(USE *use, HEAD *head,int accfd);
 #endif
+

@@ -64,20 +64,22 @@ int main()
 				break;
 
 			case 0:
+				memcpy(buf,&head,sizeof(HEAD));
+				Write(buf,sockfd);
 				break;
 
 			default:
 				puts("没有此功能选项");
 				break;
 		}
-		if(head.type==0)
-			break;
-		int a=Read(sockfd);	
-		if (a==0)
+		int a=Read(sockfd);
+		if(a==-1)
+			break;	
+		else if (a==0)
 		{
 			while(1)
 			{
-				puts("3.新产品录入 4.进仓 5.出仓 6.旧产品下线 7.产品信息变更 8.查询");
+				puts("3.新产品录入 4.进仓 5.出仓 6.旧产品下线 7.产品信息变更 8.查询 0.返回上一级");
 				memset(&head,0,sizeof(head));
 				scanf("%d",&head.type);
 				switch(head.type)
@@ -95,17 +97,24 @@ int main()
 						Read(sockfd);
 						break;
 					case 6:
+						Clear_Food(&use,&head,sockfd);
+     						Read(sockfd);
+    						break;
 					case 7:
 					case 8:
 					case 9:
 					case 10:
-					case 0:	
+					case 0:
+						a=-1;	
 						break;
 
 					default:
 						puts("暂时不支持其他功能，请重新选择");
 						break;
 				}
+				
+				if(a==-1)
+					break;	
 			}
 		}	
 	}
