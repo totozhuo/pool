@@ -116,6 +116,7 @@ void Output_Foot(USE *use, HEAD *head,int accfd)
 {
 	char buf[1024] = {0};
 	printf("请输入出货品类名称：\n");
+	
 	scanf("%s",use->name);
 	printf("请输入出货商品数量：\n");
 	scanf("%d",&use->put_count);

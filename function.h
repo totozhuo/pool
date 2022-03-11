@@ -74,7 +74,7 @@ void Addfood(USE *use,int accfd);
 void Input_Newfoot(USE *use, HEAD *head,int accfd);
 void Input_Foot(USE *use, HEAD *head,int accfd);
 void Output_Foot(USE *use, HEAD *head,int accfd);
-void Outfood(USE *use,int accfd);
+int Outfood(USE *use,int accfd);
 void ClearFood(USE *use,int accfd);
 void Clear_Food(USE *use, HEAD *head,int accfd);
 void Findfood(USE *use,int accfd);

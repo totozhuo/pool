@@ -169,7 +169,7 @@ void  Addfood(USE *use,int accfd)
 }
 
 //出仓服务器
-void  Outfood(USE *use,int accfd)
+int  Outfood(USE *use,int accfd)
 { 
 	time_t t = time(NULL);
 	int time = t;
@@ -182,8 +182,10 @@ void  Outfood(USE *use,int accfd)
 	int f = mysql_query(&mysql,temp);
 	if( f!= 0)
 	{
-		printf("%s\n",mysql_error(&mysql));
-		exit(1);
+		memset(&temp,0,sizeof(temp));
+		strcpy(temp,"出仓失败");
+		Write(temp,accfd);
+		return 0;
 	}
 
 	MYSQL_RES *res = NULL;
@@ -193,12 +195,22 @@ void  Outfood(USE *use,int accfd)
 	res = mysql_store_result(&mysql);
 	if(res == NULL)
 	{
-		printf("%s\n",mysql_error(&mysql));
-		exit(1);
+		memset(&temp,0,sizeof(temp));
+		strcpy(temp,"出仓失败");
+		Write(temp,accfd);
+		return 0;
 	}
 
 	my_ulonglong row_l = 0; 
-	row_l = mysql_num_rows(res); 
+	row_l = mysql_num_rows(res);
+	 if(row_l <= 0)
+	{
+		memset(&temp,0,sizeof(temp));
+		strcpy(temp,"出仓失败");
+		Write(temp,accfd);
+		return 0;
+		
+	}
 	while((row = mysql_fetch_row(res)) != NULL)
 	{
 		buf[i].all_count = atoi(row[2]);
@@ -229,10 +241,11 @@ void  Outfood(USE *use,int accfd)
 		strcpy(temp,"出仓成功");
 		Write(temp,accfd);
 	}
-		
+
 	bzero(temp,sizeof(temp));
 	sprintf(temp,"update kind set put_count=put_count+%d,remain_count= all_count-put_count where name='%s'",put,use->name);
 	mysql_query(&mysql,temp);
+	return 0;
 }
 
 //旧产品下线服务器
