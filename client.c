@@ -97,6 +97,9 @@ int main()
 						Read(sockfd);
 						break;
 					case 6:
+						Clear_Food(&use,&head,sockfd);
+     						Read(sockfd);
+    						break;
 					case 7:
 					case 8:
 					case 9:

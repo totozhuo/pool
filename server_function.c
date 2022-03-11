@@ -140,6 +140,9 @@ void *thread(void *arg)
 				case 5:	
 					Outfood(use,sockfd);
 					break;
+				case 6:
+    					ClearFood(use,sockfd);
+     					break;
 			}
 		}
 		close(sockfd);
@@ -340,4 +343,31 @@ void  Outfood(USE *use,int accfd)
 	bzero(temp,sizeof(temp));
 	sprintf(temp,"update kind set put_count=put_count+%d,remain_count= all_count-put_count where name='%s'",put,use->name);
 	mysql_query(&mysql,temp);
+}
+
+//旧产品下线服务器
+void ClearFood(USE *use,int accfd)
+{
+ char temp[1024] = {0}; 
+ char buf[1024] = {0}; 
+ sprintf(temp,"drop table %s",use->name);
+ 
+ int ret = mysql_query(&mysql,temp);
+ if(ret != 0)
+ {
+  memset(&temp,0,sizeof(temp));
+  strcpy(temp,"产品下线失败");
+  Write(temp,accfd);
+  printf("f:%s\n",mysql_error(&mysql));
+ }
+ 
+ sprintf(buf,"delete from kind where name='%s'",use->name);
+ int f = mysql_query(&mysql,buf);
+ if(f!=0)
+ {
+  memset(&temp,0,sizeof(temp));
+  strcpy(temp,"产品下线失败");
+  Write(temp,accfd);
+  printf("f:%s\n",mysql_error(&mysql));
+ }
 }

@@ -106,3 +106,14 @@ void Output_Foot(USE *use, HEAD *head,int accfd)
 	memcpy(buf+sizeof(HEAD),use,sizeof(USE));
 	Write(buf,accfd);
 }
+
+//旧产品下线客户端
+void Clear_Food(USE *use, HEAD *head,int accfd)
+{
+ char buf[1024] = {0};
+ printf("请输入下线货物名称：\n");
+ scanf("%s",use->name);
+ memcpy(buf,head,sizeof(HEAD));
+ memcpy(buf+sizeof(HEAD),use,sizeof(USE));
+ Write(buf,accfd);
+}

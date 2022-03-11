@@ -31,6 +31,13 @@ typedef struct
 	int place;	//位置
 }USE;
 
+typedef struct
+{
+	char name[20];
+	char type[50];
+	int  amount;
+	char state[30];
+}OP;
 //队列头文件
 struct node
 {
@@ -69,7 +76,7 @@ void Input_Newfoot(USE *use, HEAD *head,int accfd);
 void Input_Foot(USE *use, HEAD *head,int accfd);
 void Output_Foot(USE *use, HEAD *head,int accfd);
 void  Outfood(USE *use,int accfd);
-
-
+void ClearFood(USE *use,int accfd);
+void Clear_Food(USE *use, HEAD *head,int accfd);
 #endif
 
