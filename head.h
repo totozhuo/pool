@@ -11,6 +11,7 @@
 #ifndef _HEAD_H_
 #define _HEAD_H_
 
+#include <iostream>
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
@@ -27,5 +28,8 @@
 #include<errno.h>
 #include<mysql/mysql.h>
 #include<semaphore.h>
+#include <time.h>
+#include <deque>
+using namespace std;
 
 #endif

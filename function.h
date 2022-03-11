@@ -1,5 +1,5 @@
 /*************************************************************************
-    > File Name: function.h
+> File Name: function.h
 # File Name: function.h
 # Author : Mayanrong  
 # QQ : 1684615293
@@ -10,6 +10,12 @@
 
 #ifndef _FUNCTION_H_
 #define _FUNCTION_H_
+
+typedef struct 
+{
+	int fd;
+	char data[BUFSIZ];
+}DT;
 
 typedef struct 
 {
@@ -38,36 +44,30 @@ typedef struct
 	int  amount;
 	char state[30];
 }OP;
-//队列头文件
-struct node
-{
-	int data;
-	struct node *next;
-};
 
-void push_queue(struct node *queue,int data);
-int pop_queue(struct node *queue);
-int is_empty(struct node *queue);
+//lizhuo function
+void initDB();
+void RunIMServer();
+void StopIMServer();
+void* recv_work(void* arg);
+void* do_work(void* arg);
+void RegisterFunc(USE *use ,DT *node);
+void* write_work(void* arg);
 
 //错误日志头文件
 char* Time();
 void Slip(char *p);
 
 //数据库
-void Line();
-void Inster(USE *use,int accfd);
 void Log_In_Find(USE *use,int accfd);
-
 
 //登录注册
 void Sign_In(HEAD *p,int accfd);
 void Register(HEAD *p,int accfd);
 
 //服务器
-void Write(char *buf,int sockfd);
 int Read(int sockfd);
-void *thread(void *arg);
-int socket_init_sockfd(int sockfd);
+void Write(char *buf,int sockfd);
 
 //仓库操作
 void  AddNemfood(USE *use,int accfd);
@@ -78,5 +78,6 @@ void Output_Foot(USE *use, HEAD *head,int accfd);
 void  Outfood(USE *use,int accfd);
 void ClearFood(USE *use,int accfd);
 void Clear_Food(USE *use, HEAD *head,int accfd);
+
 #endif
 

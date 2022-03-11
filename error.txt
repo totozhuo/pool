@@ -1,0 +1,7 @@
+文件名：client.cpp 	 函数名：main 	 行号：48	错误原因：	Connection refused发生时间：	2022- 3-11-16:25:40
+文件名：client.cpp 	 函数名：main 	 行号：48	错误原因：	Connection refused发生时间：	2022- 3-11-16:26:07
+文件名：client.cpp 	 函数名：main 	 行号：48	错误原因：	Connection refused发生时间：	2022- 3-11-16:27:41
+文件名：client.cpp 	 函数名：main 	 行号：48	错误原因：	Connection refused发生时间：	2022- 3-11-16:28:52
+文件名：client.cpp 	 函数名：main 	 行号：48	错误原因：	Connection refused发生时间：	2022- 3-11-16:28:53
+文件名：client.cpp 	 函数名：main 	 行号：47	错误原因：	Connection refused发生时间：	2022- 3-11-16:37:09
+文件名：client.cpp 	 函数名：main 	 行号：52	错误原因：	Connection refused发生时间：	2022- 3-11-16:53:29

@@ -1,16 +1,20 @@
-/***************************************************
-  > Copyright (C) 2022 ==KINGYI== All rights reserved.
-  > File Name: udp_server.c
-  > Author: LV
-  > Mail:joseph2009@163.com 
-  > Created Time: 2022年01月13日 星期四 23时20分10秒
- ***************************************************/
+/*************************************************************************
+> File Name: server.c
+# File Name: server.c
+# Author : Mayanrong  
+# QQ : 1684615293
+# Email:1684615293@qq.com
+# Created Time: 2022年03月01日 星期二 11时59分25秒
+# 描述：                   
+ ************************************************************************/
 
-#include "hand.h"
+#include "head.h"
+#include "function.h"
 
 using namespace std;
+
 deque<DT> P;
-MYSQL mysql;  
+MYSQL mysql; 
 int iserver = 0;
 
 int main(int argc,const char* argv[])
@@ -42,6 +46,6 @@ int main(int argc,const char* argv[])
 	}
 
 	mysql_close(&mysql);
-
-	return 0;
+	
+	return 0;		
 }
