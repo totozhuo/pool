@@ -1,7 +1,7 @@
 /*************************************************************************
     > File Name: client.c
 # File Name: client.c
-# Author : Mayanrong  
+# Author : 李卓，苟涛，马彦荣  
 # QQ : 1684615293
 # Email:1684615293@qq.com
 # Created Time: 2022年03月01日 星期二 10时51分34秒
@@ -86,7 +86,7 @@ int main()
 		{
 			while(1)
 			{
-				puts("3.新产品录入 4.进仓 5.出仓 6.旧产品下线 7.产品信息变更 8.查询 0.返回上一级");
+				puts("3.新产品录入 4.进仓 5.出仓 6.旧产品下线 7.查询 0.返回上一级");
 				memset(&head,0,sizeof(head));
 				scanf("%d",&head.type);
 				switch(head.type)
@@ -108,6 +108,9 @@ int main()
      						Read(sockfd);
     						break;
 					case 7:
+						Find_Food(&use,&head,sockfd);
+						Read_find(sockfd);
+						break;
 					case 8:
 					case 9:
 					case 10:

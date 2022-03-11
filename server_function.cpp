@@ -1,7 +1,7 @@
 /*************************************************************************
     > File Name: function.cpp
 # File Name: function.cpp
-# Author : Mayanrong  
+# Author : 李卓，苟涛，马彦荣 
 # QQ : 1684615293
 # Email:1684615293@qq.com
 # Created Time: 2022年03月01日 星期二 10时53分28秒
@@ -13,7 +13,7 @@
 
 using namespace std;
 extern MYSQL mysql;
-
+OP op={0};
 //读取文件
 int Read(int sockfd)
 {
@@ -54,10 +54,26 @@ void Write(char *buf,int sockfd)
 	}
 }
 
+//操作日志
+void Oper()
+{
+	char temp[1024]={0};
+	sprintf(temp,"insert into op values(0,'%s','%s',now())",op.name,op.type);
+	int f=mysql_query(&mysql,temp);
+	if(f!=0)
+	{
+		printf("%s\n",mysql_error(&mysql));
+	}
+}
+
+//登录判断
 void Log_In_Find(USE *use,int accfd)
 {
 	char m[1024]={0};
 	sprintf(m,"select *from pw where username = '%s' and password = '%s'",use->username,use->password);
+	strcpy(op.name,use->username);
+	strcpy(op.type,"登录");
+	Oper();
 	int f=mysql_query(&mysql,m);
 	if(f!=0)
 	{
@@ -96,6 +112,8 @@ void  AddNemfood(USE *use,int accfd)
 	char temp[1024] = {0}; 
 	char buf[1024] = {0}; 
 	sprintf(temp,"insert into kind values('%s',%d,0,%d,%d,%d)",use->name,use->expiration_day,use->all_count,use->put_count,use->remain_count);
+	strcpy(op.type,"新产品录入");
+	Oper();
 	int f=mysql_query(&mysql,temp);
 	if(f!=0)
 	{
@@ -106,7 +124,7 @@ void  AddNemfood(USE *use,int accfd)
 	}
 	else
 	{
-		sprintf(buf,"create table %s(batch int PRIMARY KEY AUTO_INCREMENT,name varchar(30),all_count int,purchase_time int,shipping_time int)",use->name);
+		sprintf(buf,"create table %s(batch int PRIMARY KEY AUTO_INCREMENT,name varchar(30),all_count int,put_count int,purchase_time int,shipping_time int)",use->name);
 		int f=mysql_query(&mysql,buf);
 		if(f != 0)
 		{
@@ -124,7 +142,9 @@ void  Addfood(USE *use,int accfd)
 	char temp[1024] = {0};
    	time_t t = time(NULL);
 	use->purchase_time = t;
-	sprintf(temp,"insert into %s values(0,'%s',%d,%d,%d)",use->name,use->name,use->all_count,use->purchase_time,0);
+	sprintf(temp,"insert into %s values(0,'%s',%d,%d,%d,%d)",use->name,use->name,use->all_count,use->put_count,use->purchase_time,0);
+	strcpy(op.type,"进仓");
+	Oper();
 	int f=mysql_query(&mysql,temp);
 	if(f!=0)
 	{
@@ -157,6 +177,8 @@ void  Outfood(USE *use,int accfd)
 	char temp[1024] = {0};
 
 	sprintf(temp,"select *from %s",use->name);
+	strcpy(op.type,"出仓");
+	Oper();
 	int f = mysql_query(&mysql,temp);
 	if( f!= 0)
 	{
@@ -190,7 +212,7 @@ void  Outfood(USE *use,int accfd)
 		{
 			use->put_count = use->put_count - buf[i].all_count;
 			bzero(temp,sizeof(temp));
-			sprintf(temp,"update %s set all_count=%d,shipping_time=%d where batch=%d",use->name,0,time,buf[i].batch);
+			sprintf(temp,"update %s set put_count=put_count+%d,shipping_time=%d where batch=%d",use->name,buf[i].all_count,time,buf[i].batch);
 			mysql_query(&mysql,temp);
 		}
 		else
@@ -200,8 +222,7 @@ void  Outfood(USE *use,int accfd)
 	if(use->put_count < buf[i].all_count)
 	{
 		bzero(temp,sizeof(temp));
-		int s = buf[i].all_count - use->put_count;
-		sprintf(temp,"update %s set all_count=%d,shipping_time=%d where batch=%d ",use->name,s,time,buf[i].batch);
+		sprintf(temp,"update %s set put_count=put_count+%d,shipping_time=%d where batch=%d ",use->name,use->put_count,time,buf[i].batch);
 		mysql_query(&mysql,temp);
 
 		memset(&temp,0,sizeof(temp));
@@ -220,7 +241,8 @@ void ClearFood(USE *use,int accfd)
 	char temp[1024] = {0}; 
 	char buf[1024] = {0}; 
 	sprintf(temp,"drop table %s",use->name);
-
+	strcpy(op.type,"旧产品下线");
+	Oper();
 	int ret = mysql_query(&mysql,temp);
 	if(ret != 0)
 	{
@@ -239,4 +261,43 @@ void ClearFood(USE *use,int accfd)
 		Write(temp,accfd);
 		printf("f:%s\n",mysql_error(&mysql));
 	}
+	
+	memset(&temp,0,sizeof(temp));
+	strcpy(temp,"产品下线成功");
+	Write(temp,accfd);
 }
+
+//查询服务器
+void  Findfood(USE *use,int accfd)
+{
+ 	char temp[1024] = {0};
+	 sprintf(temp,"select *from kind where name= '%s'",use->name);
+	 printf("%s\n",temp);
+	 int f = mysql_query(&mysql,temp);
+	 if( f!= 0)
+ 	{
+  		printf("%s\n",mysql_error(&mysql));
+		
+	 }
+ 	MYSQL_RES *res = NULL;
+ 	res = mysql_store_result(&mysql);
+ 	if(res == NULL)
+ 	{
+ 	 printf("%s\n",mysql_error(&mysql));
+ 	 exit(1);
+ 	}
+	 my_ulonglong row_l = 0;   //行
+ 	MYSQL_ROW row;
+ 	row_l = mysql_num_rows(res); 
+ 	row = mysql_fetch_row(res);     
+ 	if(row_l > 0)
+	 {
+  		use->place = atoi(row[2]);
+  		use->all_count = atoi(row[3]);
+ 		use->put_count = atoi(row[4]);
+ 		use->remain_count = atoi(row[5]);
+ 		bzero(temp,sizeof(temp));
+		memcpy(temp,use,sizeof(USE));
+  		Write(temp,accfd);
+	 }
+}				

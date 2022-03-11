@@ -1,7 +1,7 @@
 /*************************************************************************
 > File Name: server.c
 # File Name: server.c
-# Author : Mayanrong  
+# Author : 李卓，苟涛，马彦荣 
 # QQ : 1684615293
 # Email:1684615293@qq.com
 # Created Time: 2022年03月01日 星期二 11时59分25秒

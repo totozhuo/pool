@@ -1,7 +1,7 @@
 /*************************************************************************
     > File Name: client_function.c
 # File Name: client_function.c
-# Author : Mayanrong  
+# Author : 李卓，苟涛，马彦荣  
 # QQ : 1684615293
 # Email:1684615293@qq.com
 # Created Time: 2022年03月10日 星期四 09时36分03秒
@@ -12,6 +12,24 @@
 #include "function.h"
 	
 using namespace std;
+
+// 读取查找信息
+void Read_find(int sockfd)
+{
+  int ret=0;
+  char buf[1024]={0};
+  ret=read(sockfd,buf,1023);
+  if(ret<0)
+  {
+   memset(buf,0,sizeof(buf));
+   sprintf(buf,"文件名：%s \t 函数名：%s \t 行号：%d\t",__FILE__,
+     __FUNCTION__,__LINE__);
+   Slip(buf);
+   exit(1); 
+  }
+  USE* use = (USE*)buf;
+  printf("货物位置：%d\t总进货量：%d\t总出货量：%d\t仓库剩余量：%d\n",use->place,use->all_count,use->put_count,use->remain_count);
+}
 //注册
 void Sign_In(HEAD *p,int accfd)
 {
@@ -75,7 +93,6 @@ void Input_Newfoot(USE *use, HEAD *head,int accfd)
 	use->remain_count = 0;
 	printf("请输入该商品保质期：\n");
 	scanf("%d",&use->expiration_day);
-	printf("请输入该商品位置：\n");
 	use->put_count = 0;
 	use->remain_count=0;
 	memcpy(buf,head,sizeof(HEAD));
@@ -112,6 +129,17 @@ void Clear_Food(USE *use, HEAD *head,int accfd)
 {
  char buf[1024] = {0};
  printf("请输入下线货物名称：\n");
+ scanf("%s",use->name);
+ memcpy(buf,head,sizeof(HEAD));
+ memcpy(buf+sizeof(HEAD),use,sizeof(USE));
+ Write(buf,accfd);
+}
+
+//查询客户端
+void Find_Food(USE *use, HEAD *head,int accfd)
+{
+ char buf[1024] = {0};
+ printf("请输入查询货物名称：\n");
  scanf("%s",use->name);
  memcpy(buf,head,sizeof(HEAD));
  memcpy(buf+sizeof(HEAD),use,sizeof(USE));

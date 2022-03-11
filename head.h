@@ -1,7 +1,7 @@
 /*************************************************************************
     > File Name: head.h
 # File Name: head.h
-# Author : Mayanrong  
+# Author : 李卓，苟涛，马彦荣 
 # QQ : 1684615293
 # Email:1684615293@qq.com
 # Created Time: 2022年03月01日 星期二 10时54分07秒
