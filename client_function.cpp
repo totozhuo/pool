@@ -1,5 +1,5 @@
 /*************************************************************************
-    > File Name: client_function.c
+> File Name: client_function.c
 # File Name: client_function.c
 # Author : 李卓，苟涛，马彦荣  
 # QQ : 1684615293
@@ -12,6 +12,17 @@
 #include "function.h"
 	
 using namespace std;
+
+void* heart_work(void* arg)
+{
+	int accfd = *(int*)arg;
+	while(1)
+	{
+		write(accfd,"1",sizeof("1"));
+		sleep(1);
+	}
+	return NULL;
+}
 
 void * Rd(void*arg)
 {
@@ -43,6 +54,7 @@ void Read_find(int sockfd)
   USE* use = (USE*)buf;
   printf("货物位置：%d\t总进货量：%d\t总出货量：%d\t仓库剩余量：%d\n",use->place,use->all_count,use->put_count,use->remain_count);
 }
+
 //注册
 void Sign_In(HEAD *p,int accfd)
 {
@@ -111,6 +123,7 @@ void Input_Newfoot(USE *use, HEAD *head,int accfd)
 	memcpy(buf,head,sizeof(HEAD));
 	memcpy(buf+sizeof(HEAD),use,sizeof(USE));
 	Write(buf,accfd);
+	Read(accfd);
 }
 //进仓
 void Input_Foot(USE *use, HEAD *head,int accfd)
@@ -123,6 +136,7 @@ void Input_Foot(USE *use, HEAD *head,int accfd)
 	memcpy(buf,head,sizeof(HEAD));
 	memcpy(buf+sizeof(HEAD),use,sizeof(USE));
 	Write(buf,accfd);
+	Read(accfd);
 }
 //出仓客户端
 void Output_Foot(USE *use, HEAD *head,int accfd)
@@ -136,17 +150,19 @@ void Output_Foot(USE *use, HEAD *head,int accfd)
 	memcpy(buf,head,sizeof(HEAD));
 	memcpy(buf+sizeof(HEAD),use,sizeof(USE));
 	Write(buf,accfd);
+	Read(accfd);
 }
 
 //旧产品下线客户端
 void Clear_Food(USE *use, HEAD *head,int accfd)
 {
- char buf[1024] = {0};
- printf("请输入下线货物名称：\n");
- scanf("%s",use->name);
- memcpy(buf,head,sizeof(HEAD));
- memcpy(buf+sizeof(HEAD),use,sizeof(USE));
- Write(buf,accfd);
+	char buf[1024] = {0};
+	printf("请输入下线货物名称：\n");
+	scanf("%s",use->name);
+	memcpy(buf,head,sizeof(HEAD));
+	memcpy(buf+sizeof(HEAD),use,sizeof(USE));
+	Write(buf,accfd);
+	Read(accfd);
 }
 
 //查询客户端
@@ -159,3 +175,31 @@ void Find_Food(USE *use, HEAD *head,int accfd)
  memcpy(buf+sizeof(HEAD),use,sizeof(USE));
  Write(buf,accfd);
 }
+
+//智能进货客户端
+void Smart_Infood(USE *use, HEAD *head,int accfd)
+{
+	char buf[1024] = {0};
+	printf("请输入智能进货名称：\n");
+	scanf("%s",use->name);
+	memcpy(buf,head,sizeof(HEAD));
+	memcpy(buf+sizeof(HEAD),use,sizeof(USE));
+	Write(buf,accfd);
+}
+//调拨客户端
+void Allot_food(USE *use, HEAD *head,int accfd)
+{
+	char buf[1024] = {0};
+	printf("请输入需要调拨货物名称：\n");
+	scanf("%s",use->name);
+	printf("请输入需要调拨货物数量：\n");
+	scanf("%d",&use->put_count);
+	printf("请输入出仓名称：\n");
+	scanf("%d",&use->all_count);
+	printf("请输入进仓名称：\n");
+	scanf("%d",&use->remain_count);
+	memcpy(buf,head,sizeof(HEAD));
+	memcpy(buf+sizeof(HEAD),use,sizeof(USE));
+	Write(buf,accfd);
+}
+

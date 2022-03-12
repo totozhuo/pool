@@ -39,6 +39,14 @@ typedef struct
 
 typedef struct
 {
+	int fd;
+	int time;
+	char name[30];
+	int all_count;
+}TIME;
+
+typedef struct
+{
 	char name[20];
 	char type[520];
 	
@@ -52,6 +60,10 @@ void* recv_work(void* arg);
 void* do_work(void* arg);
 void RegisterFunc(USE *use ,DT *node);
 void* write_work(void* arg);
+void* listen_work(void* arg);
+void* heart_check(void* arg);
+void* check_handler(void* arg);
+void* heart_work(void* arg);
 
 //错误日志头文件
 char* Time();
@@ -75,10 +87,18 @@ void Addfood(USE *use,int accfd);
 void Input_Newfoot(USE *use, HEAD *head,int accfd);
 void Input_Foot(USE *use, HEAD *head,int accfd);
 void Output_Foot(USE *use, HEAD *head,int accfd);
-int Outfood(USE *use,int accfd);
+int  Outfood(USE *use,int accfd);
 void ClearFood(USE *use,int accfd);
 void Clear_Food(USE *use, HEAD *head,int accfd);
 void Findfood(USE *use,int accfd);
 void Find_Food(USE *use, HEAD *head,int accfd);
+void Smart_Infood(USE *use, HEAD *head,int accfd);
+void SmartInfood(USE *use,int accfd);
+int  Get_remarn(USE *use);
+void Allot_food(USE *use, HEAD *head,int accfd);
+void Allotfood(USE *use,int accfd);
+int  Outfoodnor(USE *use,int accfd);
+void  Addfoodnor(USE *use,int accfd);
+
 #endif
 
