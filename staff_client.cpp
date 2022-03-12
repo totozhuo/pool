@@ -53,7 +53,19 @@ int main()
 		Slip(buf);
 		exit(1);	
 	}
-	strcpy(use.username,)
+
+	head.type=2;
+	strcpy(use.username,"yuangong");
+	strcpy(use.password,"123456");
+	memcpy(buf,&head,sizeof(head));
+	memcpy(buf+sizeof(head),&use,sizeof(use));
+	Write(buf,sockfd);
+	Read(sockfd);
+	pthread_t tid = 0;
+     //创建写入线程
+    pthread_create(&tid,NULL,Rd,&sockfd);//分离后不使用tid
+    pthread_detach(tid);
+	
 	while(1)
 	{
 		memset(buf,0,sizeof(buf));

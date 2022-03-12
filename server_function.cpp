@@ -67,7 +67,7 @@ void Oper()
 }
 
 //登录判断
-int Log_In_Find(USE *use,int accfd)
+void Log_In_Find(USE *use,int accfd)
 {
 	char m[1024]={0};
 	sprintf(m,"select *from pw where username = '%s' and password = '%s'",use->username,use->password);
