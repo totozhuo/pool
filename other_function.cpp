@@ -173,6 +173,12 @@ void* do_work(void* arg)
 			case 7:
 				Findfood(use,sockfd);
 				break;
+			case 8:
+				SmartInfood(use,sockfd);
+				break;
+			case 9:
+				Allotfood(use,sockfd);
+				break;
 		}
 	}
 	

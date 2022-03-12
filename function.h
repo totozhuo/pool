@@ -74,10 +74,18 @@ void Addfood(USE *use,int accfd);
 void Input_Newfoot(USE *use, HEAD *head,int accfd);
 void Input_Foot(USE *use, HEAD *head,int accfd);
 void Output_Foot(USE *use, HEAD *head,int accfd);
-int Outfood(USE *use,int accfd);
+int  Outfood(USE *use,int accfd);
 void ClearFood(USE *use,int accfd);
 void Clear_Food(USE *use, HEAD *head,int accfd);
 void Findfood(USE *use,int accfd);
 void Find_Food(USE *use, HEAD *head,int accfd);
+void Smart_Infood(USE *use, HEAD *head,int accfd);
+void SmartInfood(USE *use,int accfd);
+int  Get_remarn(USE *use);
+void Allot_food(USE *use, HEAD *head,int accfd);
+void Allotfood(USE *use,int accfd);
+int  Outfoodnor(USE *use,int accfd);
+void  Addfoodnor(USE *use,int accfd);
+
 #endif
 

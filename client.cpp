@@ -69,12 +69,10 @@ int main()
 			case 2:
 				Register(&head,sockfd);
 				break;
-
 			case 0:
 				memcpy(buf,&head,sizeof(HEAD));
 				Write(buf,sockfd);
 				break;
-
 			default:
 				puts("没有此功能选项");
 				break;
@@ -86,7 +84,7 @@ int main()
 		{
 			while(1)
 			{
-				puts("3.新产品录入 4.进仓 5.出仓 6.旧产品下线 7.查询 0.返回上一级");
+				puts("3.新产品录入 4.进仓 5.出仓 6.旧产品下线 7.查询 8.智能进货 9.货物调拨 0.返回上一级");
 				memset(&head,0,sizeof(head));
 				scanf("%d",&head.type);
 				switch(head.type)
@@ -105,15 +103,21 @@ int main()
 						break;
 					case 6:
 						Clear_Food(&use,&head,sockfd);
-     						Read(sockfd);
-    						break;
+     					Read(sockfd);
+    					break;
 					case 7:
 						Find_Food(&use,&head,sockfd);
 						Read_find(sockfd);
 						break;
 					case 8:
+						Smart_Infood(&use,&head,sockfd);
+						Read(sockfd);
+						break;
 					case 9:
-					case 10:
+						Allot_food(&use,&head,sockfd);
+					//	NotRead(sockfd);
+						Read(sockfd);
+						break;
 					case 0:
 						a=-1;	
 						break;
