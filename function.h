@@ -1,7 +1,7 @@
 /*************************************************************************
 > File Name: function.h
 # File Name: function.h
-# Author : Mayanrong  
+# Author : 李卓，苟涛，马彦荣 
 # QQ : 1684615293
 # Email:1684615293@qq.com
 # Created Time: 2022年03月01日 星期二 11时40分25秒
@@ -48,9 +48,8 @@ typedef struct
 typedef struct
 {
 	char name[20];
-	char type[50];
-	int  amount;
-	char state[30];
+	char type[520];
+	
 }OP;
 
 //lizhuo function
@@ -69,7 +68,7 @@ void* heart_work(void* arg);
 //错误日志头文件
 char* Time();
 void Slip(char *p);
-
+void Oper();
 //数据库
 void Log_In_Find(USE *use,int accfd);
 
@@ -80,16 +79,26 @@ void Register(HEAD *p,int accfd);
 //服务器
 int Read(int sockfd);
 void Write(char *buf,int sockfd);
-
+void Read_find(int sockfd);
+void * Rd(void*arg);
 //仓库操作
-void  AddNemfood(USE *use,int accfd);
-void  Addfood(USE *use,int accfd);
+void AddNemfood(USE *use,int accfd);
+void Addfood(USE *use,int accfd);
 void Input_Newfoot(USE *use, HEAD *head,int accfd);
 void Input_Foot(USE *use, HEAD *head,int accfd);
 void Output_Foot(USE *use, HEAD *head,int accfd);
-void  Outfood(USE *use,int accfd);
+int  Outfood(USE *use,int accfd);
 void ClearFood(USE *use,int accfd);
 void Clear_Food(USE *use, HEAD *head,int accfd);
+void Findfood(USE *use,int accfd);
+void Find_Food(USE *use, HEAD *head,int accfd);
+void Smart_Infood(USE *use, HEAD *head,int accfd);
+void SmartInfood(USE *use,int accfd);
+int  Get_remarn(USE *use);
+void Allot_food(USE *use, HEAD *head,int accfd);
+void Allotfood(USE *use,int accfd);
+int  Outfoodnor(USE *use,int accfd);
+void  Addfoodnor(USE *use,int accfd);
 
 #endif
 

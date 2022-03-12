@@ -5,3 +5,7 @@
 文件名：client.cpp 	 函数名：main 	 行号：48	错误原因：	Connection refused发生时间：	2022- 3-11-16:28:53
 文件名：client.cpp 	 函数名：main 	 行号：47	错误原因：	Connection refused发生时间：	2022- 3-11-16:37:09
 文件名：client.cpp 	 函数名：main 	 行号：52	错误原因：	Connection refused发生时间：	2022- 3-11-16:53:29
+文件名：server_function.cpp 	 函数名：Read 	 行号：27	错误原因：	Connection reset by peer发生时间：	2022- 3-11-17:50:01
+文件名：server_function.cpp 	 函数名：Write 	 行号：51	错误原因：	Broken pipe发生时间：	2022- 3-11-20:31:53
+文件名：staff_client.cpp 	 函数名：main 	 行号：52	错误原因：	Connection refused发生时间：	2022- 3-11-21:26:17
+文件名：staff_client.cpp 	 函数名：main 	 行号：52	错误原因：	Connection refused发生时间：	2022- 3-11-21:26:19

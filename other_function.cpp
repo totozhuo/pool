@@ -1,7 +1,7 @@
 /*************************************************************************
     > File Name: other_function.c
 # File Name: other_function.c
-# Author : Mayanrong  
+# Author : 李卓，苟涛，马彦荣 
 # QQ : 1684615293
 # Email:1684615293@qq.com
 # Created Time: 2022年03月10日 星期四 14时06分47秒
@@ -18,6 +18,7 @@ extern deque<DT> P;
 extern MYSQL mysql;  
 extern int iserver;
 int count = 0;
+extern OP op;
 
 //链接数据库功能模块
 void initDB()
@@ -25,7 +26,7 @@ void initDB()
 	//链接数据库
 	mysql_init(&mysql);   
 	MYSQL *flag = NULL;   
-	flag = mysql_real_connect(&mysql,"localhost","root","1","class120",0,NULL,0);
+	flag = mysql_real_connect(&mysql,"localhost","root","1","login",0,NULL,0);
 	if(flag == NULL)
 	{
 		printf("%s\n",mysql_error(&mysql));
@@ -212,6 +213,15 @@ void* do_work(void* arg)
 			case 6:
 				ClearFood(use,sockfd);
 				break;
+			case 7:
+				Findfood(use,sockfd);
+				break;
+			case 8:
+				SmartInfood(use,sockfd);
+				break;
+			case 9:
+				Allotfood(use,sockfd);
+				break;
 		}
 	}
 	
@@ -224,7 +234,10 @@ void RegisterFunc(USE *use ,DT *node)
 {
 	//注册
 	char sql[1000] = {0};
-	sprintf(sql,"insert into list values('%s','%s')",use->username,use->password);
+	sprintf(sql,"insert into pw values('%s','%s')",use->username,use->password);
+	strcpy(op.name,use->username);
+	strcpy(op.type,"注册");
+	Oper();
 	puts(sql);	 
 	strcpy(node->data,sql);	
 	P.push_back(*node);
