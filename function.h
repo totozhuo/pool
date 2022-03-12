@@ -39,6 +39,14 @@ typedef struct
 
 typedef struct
 {
+	int fd;
+	int time;
+	char name[30];
+	int all_count;
+}TIME;
+
+typedef struct
+{
 	char name[20];
 	char type[50];
 	int  amount;
@@ -53,6 +61,10 @@ void* recv_work(void* arg);
 void* do_work(void* arg);
 void RegisterFunc(USE *use ,DT *node);
 void* write_work(void* arg);
+void* listen_work(void* arg);
+void* heart_check(void* arg);
+void* check_handler(void* arg);
+void* heart_work(void* arg);
 
 //错误日志头文件
 char* Time();

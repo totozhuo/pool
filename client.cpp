@@ -19,10 +19,10 @@ int iserver;
 
 int main()
 {
-	int sockfd=0;
-	int	ret=0;
-	socklen_t len=0;
-	char buf[1024]={0};
+	int sockfd = 0;
+	int	ret = 0;
+	socklen_t len = 0;
+	char buf[1024] = {0};
 	HEAD head;
 	USE use = {0};
 	memset(&head,0,sizeof(head));
@@ -53,7 +53,12 @@ int main()
 		Slip(buf);
 		exit(1);	
 	}
-
+	/*	
+	//创建心跳包线程
+	pthread_t tid = 0;
+	pthread_create(&tid,NULL,heart_work,(void*)&sockfd);//分离后不使用tid
+	pthread_detach(tid);
+	*/
 	while(1)
 	{
 		memset(buf,0,sizeof(buf));
@@ -65,24 +70,22 @@ int main()
 			case 1:
 				Sign_In(&head,sockfd);
 				break;
-
 			case 2:
 				Register(&head,sockfd);
 				break;
-
 			case 0:
 				memcpy(buf,&head,sizeof(HEAD));
 				Write(buf,sockfd);
 				break;
-
 			default:
 				puts("没有此功能选项");
 				break;
 		}
-		int a=Read(sockfd);
-		if(a==-1)
+		
+		int a = Read(sockfd);
+		if(a != 0)
 			break;	
-		else if (a==0)
+		else if (a == 0)
 		{
 			while(1)
 			{
@@ -93,26 +96,22 @@ int main()
 				{
 					case 3:
 						Input_Newfoot(&use,&head,sockfd);
-						Read(sockfd);
 						break;
 					case 4:
 						Input_Foot(&use,&head,sockfd);
-						Read(sockfd);
 						break;
 					case 5:
 						Output_Foot(&use,&head,sockfd);
-						Read(sockfd);
 						break;
 					case 6:
 						Clear_Food(&use,&head,sockfd);
-     						Read(sockfd);
-    						break;
+    					break;
 					case 7:
 					case 8:
 					case 9:
 					case 10:
 					case 0:
-						a=-1;	
+						a = -1;	
 						break;
 
 					default:
@@ -127,6 +126,7 @@ int main()
 	}
 
 	close(sockfd);
+	
 	return 0;
 }
 

@@ -139,12 +139,80 @@ void  Addfood(USE *use,int accfd)
 		sprintf(temp,"update kind set all_count = all_count+%d , remain_count= all_count - put_count where name='%s'",use->all_count,use->name);
 		f=mysql_query(&mysql,temp);
 		if(f!=0)
-		{
+		{	char m[1024]={0};
+	sprintf(m,"select *from pw where username = '%s' and password = '%s'",use->username,use->password);
+	int f=mysql_query(&mysql,m);
+	if(f!=0)
+	{
+		printf("m:%s\n",mysql_error(&mysql));
+		exit(1);
+	}
+
+	MYSQL_RES *res=NULL;
+	MYSQL_ROW row;
+
+	res=mysql_store_result(&mysql);
+	if(res==NULL)
+	{
+		printf("res:%s\n",mysql_error(&mysql));
+		exit(1);
+	}
+	
+	row=mysql_fetch_row(res);
+	if (row>0)
+	{
+		memset(m,0,sizeof(m));
+		strcpy(m,"log_in_success");
+		Write(m,accfd);
+	}
+	else
+	{
+		memset(m,0,sizeof(m));
+		strcpy(m,"登录失败");
+		Write(m,accfd);
+	}
+
 			printf("f1:%s",mysql_error(&mysql));
 		}
 		memset(&temp,0,sizeof(temp));
 		strcpy(temp,"进仓成功");
 		Write(temp,accfd);
+		
+		char sql[1024]={0};
+		sprintf(sql,"select *from kind where username = '%s'",use->username);
+		int f=mysql_query(&mysql,sql);
+		if(f!=0)
+		{
+			printf("m:%s\n",mysql_error(&mysql));
+			exit(1);
+		}
+
+		MYSQL_RES *res=NULL;
+		MYSQL_ROW row;
+
+		res=mysql_store_result(&mysql);
+		if(res==NULL)
+		{
+			printf("res:%s\n",mysql_error(&mysql));
+			exit(1);
+		}
+
+		int time;
+		row=mysql_fetch_row(res);
+		if (row>0)
+			time = atoi(row[1]);
+		
+		//accfd time use->name use->all_count	
+		TIME *message = (TIME*)malloc(sizeof(TIME));
+		message->fd = accfd;
+		message->time = time;
+		strcpy(message->name,use->name);
+		message->all_count = use->all_count;
+
+		//创建监控线程
+		pthread_t tid = 0;
+		pthread_create(&tid,NULL,listen_work,(void*)message);//分离后不使用tid
+		pthread_detach(tid);
 	}
 }
 

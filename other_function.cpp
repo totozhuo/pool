@@ -6,7 +6,7 @@
 # Email:1684615293@qq.com
 # Created Time: 2022年03月10日 星期四 14时06分47秒
 # 描述：                   
- ************************************************************************/
+************************************************************************/
  
 #include "head.h"
 #include "function.h"
@@ -17,6 +17,7 @@ using namespace std;
 extern deque<DT> P;
 extern MYSQL mysql;  
 extern int iserver;
+int count = 0;
 
 //链接数据库功能模块
 void initDB()
@@ -52,7 +53,7 @@ void RunIMServer()
 		//创建接收线程
 		pthread_create(&tid,NULL,recv_work,(void*)pool);//分离后不使用tid
 		pthread_detach(tid);
-		printf("服务器已启动....\n");
+		printf("服务器已启动....\n");	
 	}
 }
 
@@ -113,6 +114,12 @@ void* recv_work(void* arg)
 		}
 		else
 		{
+			pthread_t tid = 0;
+			pthread_create(&tid,NULL,heart_check,(void*)&accfd);//分离后不使用tid
+			pthread_detach(tid);
+			pthread_create(&tid,NULL,check_handler,(void*)&accfd);//分离后不使用tid
+			pthread_detach(tid);
+
 			threadpool_add_task(pool,do_work,(void*)&accfd);
 		}
 	}
@@ -121,6 +128,41 @@ void* recv_work(void* arg)
 	close(sockfd);
 	
 	return NULL;
+}
+
+void* heart_check(void* arg)
+{
+	int accfd = *(int*)arg;
+	printf("心跳检测线程已开启!\n");
+	
+	while(1)
+	{
+		char buf[10] = {0};
+		int ret = read(accfd,buf,sizeof(char));
+		if(ret == 0)
+			pthread_exit(NULL);
+		if(ret > 0)
+			count = 0;	
+	}
+
+	return NULL;
+}
+
+void* check_handler(void* arg)
+{
+	int accfd = *(int*)arg;
+	while(1)
+	{
+		count++;
+		sleep(1);
+		if(count == 5)
+		{
+			printf("用户已掉线!!\n");
+			close(accfd);
+			break;
+		}
+	}
+	pthread_exit(NULL);
 }
 
 //工作函数
@@ -213,6 +255,18 @@ void* write_work(void* arg)
 			Write(temp,sql.fd);
 		}
 	}
+	pthread_exit(NULL);
+}
+
+//监控过期产品线程
+void* listen_work(void* arge)
+{
+	TIME *arg = (TIME*)arge;
+	sleep(arg->time);
+	char tmp[1024] = {0};
+	sprintf(tmp,"%s过期%d箱,请报废",arg->name,arg->all_count);
+	write(arg->fd,tmp,sizeof(tmp));
+	free(arg);
 	pthread_exit(NULL);
 }
 

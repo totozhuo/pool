@@ -1,5 +1,5 @@
 /*************************************************************************
-    > File Name: client_function.c
+> File Name: client_function.c
 # File Name: client_function.c
 # Author : Mayanrong  
 # QQ : 1684615293
@@ -12,6 +12,18 @@
 #include "function.h"
 	
 using namespace std;
+
+void* heart_work(void* arg)
+{
+	int accfd = *(int*)arg;
+	while(1)
+	{
+		write(accfd,"1",sizeof("1"));
+		sleep(1);
+	}
+	return NULL;
+}
+
 //注册
 void Sign_In(HEAD *p,int accfd)
 {
@@ -81,6 +93,7 @@ void Input_Newfoot(USE *use, HEAD *head,int accfd)
 	memcpy(buf,head,sizeof(HEAD));
 	memcpy(buf+sizeof(HEAD),use,sizeof(USE));
 	Write(buf,accfd);
+	Read(accfd);
 }
 //进仓
 void Input_Foot(USE *use, HEAD *head,int accfd)
@@ -93,6 +106,7 @@ void Input_Foot(USE *use, HEAD *head,int accfd)
 	memcpy(buf,head,sizeof(HEAD));
 	memcpy(buf+sizeof(HEAD),use,sizeof(USE));
 	Write(buf,accfd);
+	Read(accfd);
 }
 //出仓客户端
 void Output_Foot(USE *use, HEAD *head,int accfd)
@@ -105,15 +119,17 @@ void Output_Foot(USE *use, HEAD *head,int accfd)
 	memcpy(buf,head,sizeof(HEAD));
 	memcpy(buf+sizeof(HEAD),use,sizeof(USE));
 	Write(buf,accfd);
+	Read(accfd);
 }
 
 //旧产品下线客户端
 void Clear_Food(USE *use, HEAD *head,int accfd)
 {
- char buf[1024] = {0};
- printf("请输入下线货物名称：\n");
- scanf("%s",use->name);
- memcpy(buf,head,sizeof(HEAD));
- memcpy(buf+sizeof(HEAD),use,sizeof(USE));
- Write(buf,accfd);
+	char buf[1024] = {0};
+	printf("请输入下线货物名称：\n");
+	scanf("%s",use->name);
+	memcpy(buf,head,sizeof(HEAD));
+	memcpy(buf+sizeof(HEAD),use,sizeof(USE));
+	Write(buf,accfd);
+	Read(accfd);
 }
