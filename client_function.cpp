@@ -38,6 +38,7 @@ void * Rd(void*arg)
 		puts(buf);
 	}
 }
+
 void Read_find(int sockfd)
 {
   int ret=0;

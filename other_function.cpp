@@ -191,10 +191,9 @@ void* do_work(void* arg)
 		
 		switch (head->type)
 		{
-			case 0:
-				strcpy(buf,"exit");
-				Write(buf,sockfd);
-				break;
+			case 0:{
+					   strcpy(buf,"exit");
+						Write(buf,sockfd);};break;
 			case 1:
 				RegisterFunc(use,&node);
 				break;	
