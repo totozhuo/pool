@@ -20,7 +20,7 @@ int iserver;
 int main()
 {
 	int sockfd = 0;
-	int	ret = 0;
+	int	ret = 0,c = 0;
 	socklen_t len = 0;
 	char buf[1024] = {0};
 	HEAD head;
@@ -68,24 +68,18 @@ int main()
 		switch(head.type)
 		{
 			case 1:
-				Sign_In(&head,sockfd);
-				break;
+				Sign_In(&head,sockfd);break;
 			case 2:
-				Register(&head,sockfd);
-				break;
-			case 0:
-				memcpy(buf,&head,sizeof(HEAD));
-				Write(buf,sockfd);
-				break;
+				Register(&head,sockfd);break;
+			case 0:	c = -1;break;
 			default:
-				puts("没有此功能选项");
-				break;
+				puts("没有此功能选项");break;
 		}
 		
-		int a = Read(sockfd);
-		if(a != 0)
+		if(c == -1)
 			break;	
-		else if (a == 0)
+		int a = Read(sockfd);
+		if (a == 0)
 		{
 			while(1)
 			{
@@ -95,36 +89,30 @@ int main()
 				switch(head.type)
 				{
 					case 3:
-						Input_Newfoot(&use,&head,sockfd);
-						break;
+						Input_Newfoot(&use,&head,sockfd);break;
 					case 4:
 						Input_Foot(&use,&head,sockfd);
-						break;
+						Read(sockfd);break;
 					case 5:
 						Output_Foot(&use,&head,sockfd);
-						break;
+						Read(sockfd);break;
 					case 6:
-						Clear_Food(&use,&head,sockfd);
-    					break;
+						Clear_Food(&use,&head,sockfd);break;
 					case 7:
 						Find_Food(&use,&head,sockfd);
-						Read_find(sockfd);
-						break;
+						Read_find(sockfd);break;
 					case 8:
 						Smart_Infood(&use,&head,sockfd);
 						Read(sockfd);
 						break;
 					case 9:
 						Allot_food(&use,&head,sockfd);
-						Read(sockfd);
-						break;
+						Read(sockfd);break;
 					case 0:
-						a = -1;	
-						break;
+						a = -1;break;
 
 					default:
-						puts("暂时不支持其他功能，请重新选择");
-						break;
+						puts("暂时不支持其他功能，请重新选择");break;
 				}
 				
 				if(a==-1)

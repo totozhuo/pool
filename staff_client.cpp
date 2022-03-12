@@ -23,10 +23,7 @@ int main()
 	int	ret=0;
 	socklen_t len=0;
 	char buf[1024]={0};
-	HEAD head;
-	USE use = {0};
-	memset(&head,0,sizeof(head));
-	
+
 	struct sockaddr_in addr;
 	bzero(&addr,sizeof(addr));
 	addr.sin_family = AF_INET;
@@ -54,46 +51,44 @@ int main()
 		exit(1);	
 	}
 
-	head.type=2;
+	//创建心跳包线程
+	pthread_t tid = 0;
+	pthread_create(&tid,NULL,heart_work,(void*)&sockfd);//分离后不使用tid
+	pthread_detach(tid);
+
+	pthread_create(&tid,NULL,Rd,(void*)&sockfd);//分离后不使用tid
+	pthread_detach(tid);
+	
+	HEAD head;
+	memset(&head,0,sizeof(head));
+	USE use;
+	memset(&use,0,sizeof(use));
+	
+	head.type = 2;
 	strcpy(use.username,"yuangong");
 	strcpy(use.password,"123456");
 	memcpy(buf,&head,sizeof(head));
 	memcpy(buf+sizeof(head),&use,sizeof(use));
 	Write(buf,sockfd);
-	Read(sockfd);
-	pthread_t tid = 0;
-     //创建写入线程
-    pthread_create(&tid,NULL,Rd,&sockfd);//分离后不使用tid
-    pthread_detach(tid);
-	
+
 	while(1)
-	{
-		memset(buf,0,sizeof(buf));
+	{	
 		memset(&head,0,sizeof(head));
-		puts("4.进货 5.出货  0.退出");
+		puts("4.进货 5.出货 0.退出");
 		scanf("%d",&head.type);
 		switch(head.type)
 		{
 			case 4:
-				Input_Foot(&use,&head,sockfd);
-				Read(sockfd);
-				break;
+				Input_Foot(&use,&head,sockfd);break;
 			case 5:
-				Output_Foot(&use,&head,sockfd);
-				Read(sockfd);
-				break;
-			case 0:
-				
-				break;
-
+				Output_Foot(&use,&head,sockfd);break;
+			case 0:	break;
 			default:
-				puts("没有此功能选项");
+					puts("没有此功能选项");
 				break;
 		}
-		
-		
+		usleep(100000);
 		if (head.type==0)
 			break;
-		
 	}
 }

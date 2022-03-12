@@ -115,9 +115,8 @@ void* recv_work(void* arg)
 		}
 		else
 		{
+			printf("心跳检测线程已开启!\n");
 			pthread_t tid = 0;
-			pthread_create(&tid,NULL,heart_check,(void*)&accfd);//分离后不使用tid
-			pthread_detach(tid);
 			pthread_create(&tid,NULL,check_handler,(void*)&accfd);//分离后不使用tid
 			pthread_detach(tid);
 
@@ -131,22 +130,9 @@ void* recv_work(void* arg)
 	return NULL;
 }
 
-void* heart_check(void* arg)
+void heart_check()
 {
-	int accfd = *(int*)arg;
-	printf("心跳检测线程已开启!\n");
-	
-	while(1)
-	{
-		char buf[10] = {0};
-		int ret = read(accfd,buf,sizeof(char));
-		if(ret == 0)
-			pthread_exit(NULL);
-		if(ret > 0)
-			count = 0;	
-	}
-
-	return NULL;
+	count = 0;	
 }
 
 void* check_handler(void* arg)
@@ -191,37 +177,27 @@ void* do_work(void* arg)
 		
 		switch (head->type)
 		{
-			case 0:
-				strcpy(buf,"exit");
-				Write(buf,sockfd);
-				break;
+			case 0:break;
 			case 1:
-				RegisterFunc(use,&node);
-				break;	
+				RegisterFunc(use,&node);break;	
 			case 2:	
-				Log_In_Find(use,sockfd);
-				break;
+				Log_In_Find(use,sockfd);break;
 			case 3:
-				AddNemfood(use,sockfd);
-				break;
+				AddNemfood(use,sockfd);break;
 			case 4:
-				Addfood(use,sockfd);
-				break;
+				Addfood(use,sockfd);break;
 			case 5:	
-				Outfood(use,sockfd);
-				break;
+				Outfood(use,sockfd);break;
 			case 6:
-				ClearFood(use,sockfd);
-				break;
+				ClearFood(use,sockfd);break;
 			case 7:
-				Findfood(use,sockfd);
-				break;
+				Findfood(use,sockfd);break;
 			case 8:
-				SmartInfood(use,sockfd);
-				break;
+				SmartInfood(use,sockfd);break;
 			case 9:
-				Allotfood(use,sockfd);
-				break;
+				Allotfood(use,sockfd);break;
+			case 10:
+				heart_check();break;
 		}
 	}
 	

@@ -16,11 +16,17 @@ using namespace std;
 void* heart_work(void* arg)
 {
 	int accfd = *(int*)arg;
+	HEAD head;
+	char buf[1024] = {0};	
+	head.type = 10;
+	memcpy(buf,&head,sizeof(head));
+	
 	while(1)
 	{
-		write(accfd,"1",sizeof("1"));
+		Write(buf,accfd);
 		sleep(1);
 	}
+	
 	return NULL;
 }
 
@@ -35,9 +41,11 @@ void * Rd(void*arg)
 		{
 			perror("read");
 		}
+		if(strcmp(buf,"log_in_success"))
 		puts(buf);
 	}
 }
+
 void Read_find(int sockfd)
 {
   int ret=0;
@@ -136,8 +144,8 @@ void Input_Foot(USE *use, HEAD *head,int accfd)
 	memcpy(buf,head,sizeof(HEAD));
 	memcpy(buf+sizeof(HEAD),use,sizeof(USE));
 	Write(buf,accfd);
-	Read(accfd);
 }
+
 //出仓客户端
 void Output_Foot(USE *use, HEAD *head,int accfd)
 {
@@ -150,7 +158,6 @@ void Output_Foot(USE *use, HEAD *head,int accfd)
 	memcpy(buf,head,sizeof(HEAD));
 	memcpy(buf+sizeof(HEAD),use,sizeof(USE));
 	Write(buf,accfd);
-	Read(accfd);
 }
 
 //旧产品下线客户端
