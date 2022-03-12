@@ -68,6 +68,7 @@ void Register(HEAD *p,int accfd);
 int Read(int sockfd);
 void Write(char *buf,int sockfd);
 void Read_find(int sockfd);
+void * Rd(void*arg);
 //仓库操作
 void AddNemfood(USE *use,int accfd);
 void Addfood(USE *use,int accfd);

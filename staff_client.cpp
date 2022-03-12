@@ -53,7 +53,7 @@ int main()
 		Slip(buf);
 		exit(1);	
 	}
-	
+	strcpy(use.username,)
 	while(1)
 	{
 		memset(buf,0,sizeof(buf));

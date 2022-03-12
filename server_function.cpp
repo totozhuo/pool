@@ -67,7 +67,7 @@ void Oper()
 }
 
 //登录判断
-void Log_In_Find(USE *use,int accfd)
+int Log_In_Find(USE *use,int accfd)
 {
 	char m[1024]={0};
 	sprintf(m,"select *from pw where username = '%s' and password = '%s'",use->username,use->password);
@@ -78,7 +78,7 @@ void Log_In_Find(USE *use,int accfd)
 	if(f!=0)
 	{
 		printf("m:%s\n",mysql_error(&mysql));
-		exit(1);
+		
 	}
 
 	MYSQL_RES *res=NULL;
