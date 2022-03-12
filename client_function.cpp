@@ -13,7 +13,20 @@
 	
 using namespace std;
 
-// 读取查找信息
+void * Rd(void*arg)
+{
+	int sockfd = *((int*)arg);
+	while(1)
+	{
+		char buf[1024]={0};
+		int ret =read(sockfd,buf,sizeof(buf));
+		if (ret < 0)
+		{
+			perror("read");
+		}
+		puts(buf);
+	}
+}
 void Read_find(int sockfd)
 {
   int ret=0;
