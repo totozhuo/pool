@@ -52,7 +52,7 @@ typedef struct
 	
 }OP;
 
-//lizhuo function
+//function
 void initDB();
 void RunIMServer();
 void StopIMServer();
@@ -69,6 +69,7 @@ void* heart_work(void* arg);
 char* Time();
 void Slip(char *p);
 void Oper();
+
 //数据库
 void Log_In_Find(USE *use,int accfd);
 
@@ -81,6 +82,7 @@ int Read(int sockfd);
 void Write(char *buf,int sockfd);
 void Read_find(int sockfd);
 void * Rd(void*arg);
+
 //仓库操作
 void AddNemfood(USE *use,int accfd);
 void Addfood(USE *use,int accfd);
@@ -90,15 +92,15 @@ void Output_Foot(USE *use, HEAD *head,int accfd);
 int  Outfood(USE *use,int accfd);
 void ClearFood(USE *use,int accfd);
 void Clear_Food(USE *use, HEAD *head,int accfd);
-void Findfood(USE *use,int accfd);
-void Find_Food(USE *use, HEAD *head,int accfd);
+void Findfood(int accfd);
+void Find_Food(HEAD *head,int accfd);
 void Smart_Infood(USE *use, HEAD *head,int accfd);
 void SmartInfood(USE *use,int accfd);
 int  Get_remarn(USE *use);
 void Allot_food(USE *use, HEAD *head,int accfd);
 void Allotfood(USE *use,int accfd);
 int  Outfoodnor(USE *use,int accfd);
-void  Addfoodnor(USE *use,int accfd);
+void Addfoodnor(USE *use,int accfd);
 
 #endif
 

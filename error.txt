@@ -12,3 +12,4 @@
 文件名：server_function.cpp 	 函数名：Write 	 行号：51	错误原因：	Bad file descriptor发生时间：	2022- 3-12-10:16:34
 文件名：server_function.cpp 	 函数名：Write 	 行号：51	错误原因：	Bad file descriptor发生时间：	2022- 3-12-10:23:15
 文件名：server_function.cpp 	 函数名：Write 	 行号：51	错误原因：	Bad file descriptor发生时间：	2022- 3-12-10:35:22
+文件名：client.cpp 	 函数名：main 	 行号：52	错误原因：	Connection refused发生时间：	2022- 3-13-13:10:32
