@@ -58,70 +58,83 @@ int main()
 	pthread_t tid = 0;
 	pthread_create(&tid,NULL,heart_work,(void*)&sockfd);//分离后不使用tid
 	pthread_detach(tid);
-	
+
 	while(1)
 	{
-		memset(buf,0,sizeof(buf));
-		memset(&head,0,sizeof(head));
-		puts("1.注册 2.登录  0.退出");
-		scanf("%d",&head.type);
-		switch(head.type)
+		do
 		{
-			case 1:
-				Sign_In(&head,sockfd);break;
-			case 2:
-				Register(&head,sockfd);break;
-			case 0:	c = -1;break;
-			default:
-				puts("没有此功能选项");break;
-		}
-		
-		if(c == -1)
-			break;	
-		int a = Read(sockfd);
-		if (a == 0)
-		{
+			memset(&head,0,sizeof(head));
+			puts("1.注册 2.登录  0.退出");
 			while(1)
 			{
-				puts("3.新产品录入 4.进仓 5.出仓 6.旧产品下线 7.查询 8.智能进货 9.货物调拨 0.返回上一级");
-				memset(&head,0,sizeof(head));
-				scanf("%d",&head.type);
-				switch(head.type)
-				{
-					case 3:
-						Input_Newfoot(&use,&head,sockfd);break;
-					case 4:
-						Input_Foot(&use,&head,sockfd);
-						Read(sockfd);break;
-					case 5:
-						Output_Foot(&use,&head,sockfd);
-						Read(sockfd);break;
-					case 6:
-						Clear_Food(&use,&head,sockfd);break;
-					case 7:
-						Find_Food(&use,&head,sockfd);
-						Read_find(sockfd);break;
-					case 8:
-						Smart_Infood(&use,&head,sockfd);
-						Read(sockfd);
-						break;
-					case 9:
-						Allot_food(&use,&head,sockfd);
-						Read(sockfd);break;
-					case 0:
-						a = -1;break;
-
-					default:
-						puts("暂时不支持其他功能，请重新选择");break;
-				}
-				
-				if(a==-1)
-					break;	
+				c=scanf("%d",&head.type);
+				while(getchar()!='\n');
+				if(c!=1)
+					puts("请输入正确的数字");
+				else
+					break;
 			}
-		}	
-	}
 
+			switch(head.type)
+			{
+				case 1:
+					Sign_In(&head,sockfd);break;
+				case 2:
+					Register(&head,sockfd);break;
+				case 0:
+					exit(1);break;
+				default:
+					head.type = 520;
+					memcpy(buf,&head,sizeof(HEAD));
+					Write(buf,sockfd);break;
+			}
+
+		}while(Read(sockfd));
+
+		do
+		{
+			puts("3.新产品录入 4.进仓 5.出仓 6.旧产品下线 7.查询 8.智能进货 9.货物调拨 0.返回上一级");
+			memset(&head,0,sizeof(head));
+			while(1)
+			{
+				c=scanf("%d",&head.type);
+				while(getchar()!='\n');
+				if(c!=1)
+					puts("请输入正确的数字");
+				else
+					break;
+			}
+
+			switch(head.type)
+			{
+				case 3:
+					Input_Newfoot(&use,&head,sockfd);break;
+				case 4:
+					Input_Foot(&use,&head,sockfd);
+					Read(sockfd);break;
+				case 5:
+					Output_Foot(&use,&head,sockfd);
+					Read(sockfd);break;
+				case 6:
+					Clear_Food(&use,&head,sockfd);break;
+				case 7:
+					Find_Food(&head,sockfd);
+					Read_find(sockfd);break;
+				case 8:
+					Smart_Infood(&use,&head,sockfd);
+					Read(sockfd);
+					break;
+				case 9:
+					Allot_food(&use,&head,sockfd);
+					Read(sockfd);break;
+				case 0:break;
+				default:
+					puts("暂时不支持其他功能，请重新选择");
+					break;
+			}
+
+		}while(head.type);		
+	}
 	close(sockfd);
-	
 	return 0;
 }

@@ -191,13 +191,16 @@ void* do_work(void* arg)
 			case 6:
 				ClearFood(use,sockfd);break;
 			case 7:
-				Findfood(use,sockfd);break;
+				Findfood(sockfd);break;
 			case 8:
 				SmartInfood(use,sockfd);break;
 			case 9:
 				Allotfood(use,sockfd);break;
 			case 10:
 				heart_check();break;
+			default:
+				strcpy(buf,"没有此功能选项，请重新选择");
+				Write(buf,sockfd);break;
 		}
 	}
 	

@@ -14,27 +14,28 @@
 using namespace std;
 extern MYSQL mysql;
 OP op={0},ov={0};
+int i=0;
 
 //读取服务器信息
 int Read(int sockfd)
 {
-		int ret=0;
-		char buf[1024]={0};
-		ret=read(sockfd,buf,1023);
-		if(ret<0)
-		{
-			memset(buf,0,sizeof(buf));
-			sprintf(buf,"文件名：%s \t 函数名：%s \t 行号：%d\t",__FILE__,
-					__FUNCTION__,__LINE__);
-			Slip(buf);
-			exit(1);	
-		}
+	int ret=0;
+	char buf[1024]={0};
+	ret=read(sockfd,buf,1023);
+	if(ret<0)
+	{
+		memset(buf,0,sizeof(buf));
+		sprintf(buf,"文件名：%s \t 函数名：%s \t 行号：%d\t",__FILE__,
+				__FUNCTION__,__LINE__);
+		Slip(buf);
+		exit(1);	
+	}
 
-		puts(buf);
+	puts(buf);
+	if(strcmp(buf,"log_in_success")==0)
+		return 0;
 
-		if(strcmp(buf,"log_in_success")==0)
-			return 0;
-		return 2;
+	return 2;
 }	
 
 //向服务器发送信息
@@ -49,7 +50,6 @@ void Write(char *buf,int sockfd)
 		sprintf(temp,"文件名：%s \t 函数名：%s \t 行号：%d\t",__FILE__,
 				__FUNCTION__,__LINE__);
 		Slip(temp);
-		exit(1);	
 	}
 }
 
@@ -79,7 +79,7 @@ void Log_In_Find(USE *use,int accfd)
 	int f=mysql_query(&mysql,m);
 	if(f!=0)
 	{
-		printf("m:%s\n",mysql_error(&mysql));
+		printf("f:%s\n",mysql_error(&mysql));
 		
 	}
 
@@ -122,7 +122,7 @@ void  AddNemfood(USE *use,int accfd)
 		memset(&temp,0,sizeof(temp));
 		strcpy(temp,"新产品录入失败");
 		Write(temp,accfd);
-		printf("f:%s\n",mysql_error(&mysql));
+		printf("f125:%s\n",mysql_error(&mysql));
 	}
 	else
 	{
@@ -130,7 +130,7 @@ void  AddNemfood(USE *use,int accfd)
 		int f=mysql_query(&mysql,buf);
 		if(f != 0)
 		{
-			printf("f:%s",mysql_error(&mysql));
+			printf("f133:%s",mysql_error(&mysql));
 		}
 		memset(&temp,0,sizeof(temp));
 		strcpy(temp,"新产品录入成功");
@@ -150,7 +150,7 @@ void  Addfood(USE *use,int accfd)
 	int f=mysql_query(&mysql,temp);
 	if(f!=0)
 	{
-		printf("f:%s",mysql_error(&mysql));
+		printf("f153:%s",mysql_error(&mysql));
 		memset(&temp,0,sizeof(temp));
 		strcpy(temp,"进仓失败");
 		Write(temp,accfd);
@@ -170,13 +170,14 @@ void  Addfood(USE *use,int accfd)
 
 
 		if(!strcmp(ov.name,"yuangong"))	
-		{	
+		{
+			strcpy(ov.name," ");
 			char sql[1024]={0};
 			sprintf(sql,"select *from kind where name = '%s'",use->name);
 			int f=mysql_query(&mysql,sql);
 			if(f!=0)
 			{
-				printf("m:%s\n",mysql_error(&mysql));
+				printf("f180:%s\n",mysql_error(&mysql));
 				exit(1);
 			}
 
@@ -329,10 +330,10 @@ void ClearFood(USE *use,int accfd)
 }
 
 //查询服务器
-void  Findfood(USE *use,int accfd)
+void  Findfood(int accfd)
 {
 	char temp[1024] = {0};
-	sprintf(temp,"select *from kind where name= '%s'",use->name);
+	sprintf(temp,"select *from kind ");
 	printf("%s\n",temp);
 	strcpy(op.type,"查询");
 	Oper();
@@ -347,21 +348,26 @@ void  Findfood(USE *use,int accfd)
 	if(res == NULL)
 	{
 		printf("%s\n",mysql_error(&mysql));
-		exit(1);
 	}
 	my_ulonglong row_l = 0;   //行
 	MYSQL_ROW row;
-	row_l = mysql_num_rows(res); 
-	row = mysql_fetch_row(res);     
-	if(row_l > 0)
+	row_l = mysql_num_rows(res);
+	USE buf[row_l]={0};
+	buf[1].batch = row_l;
+	while(row = mysql_fetch_row(res)) 
 	{
-		use->place = atoi(row[2]);
-		use->all_count = atoi(row[3]);
-		use->put_count = atoi(row[4]);
-		use->remain_count = atoi(row[5]);
-		bzero(temp,sizeof(temp));
-		memcpy(temp,use,sizeof(USE));
-		Write(temp,accfd);
+		strcpy(buf[i].name,row[0]);
+		buf[i].place = atoi(row[2]);
+		buf[i].all_count = atoi(row[3]);
+		buf[i].put_count = atoi(row[4]);
+		buf[i].remain_count = atoi(row[5]);
+		i++;
+	}
+	
+	int ret = write(accfd,buf,sizeof(buf));
+	if (res < 0)
+	{
+		perror("write");
 	}
 }
 
@@ -457,48 +463,78 @@ void  SmartInfood(USE *use,int accfd)
 //调拨
 void  Allotfood(USE *use,int accfd)
 {
+	char temp[1024] = {0};
 	strcpy(op.type,"调拨");
 	Oper();
-	if(use->all_count < use->remain_count)
+	printf("%s   %s   %d\n",use->username,use->password,use->put_count);
+	int put = use->put_count;
+	if(strcmp(use->username,"kind") == 0)
 	{
-		char temp[1024] = {0};
-		sprintf(temp,"update kind2 set count=count+%d where name= '%s'",use->put_count,use->name);
-		printf("%s\n",temp);
-		int f = mysql_query(&mysql,temp);
-		if( f!= 0)
+		int a=Outfoodnor(use,accfd);
+		if(a == 0)
 		{
-			printf("%s\n",mysql_error(&mysql));
-			memset(&temp,0,sizeof(temp));
-			sprintf(temp,"调拨失败");
-			Write(temp,accfd);
+				sprintf(temp,"insert into kind2 values('%s',%d,0,now(),0)",\
+						use->name,put);
+				puts(temp);
+			int f = mysql_query(&mysql,temp);
+			if( f!= 0)
+			{
+				bzero(temp,sizeof(temp));
+				f=mysql_query(&mysql,temp);
+				sprintf(temp,"update kind2 set all_count = all_count+%d, purchase_time = now() where name= '%s'",put,use->name);
+				printf("%s\n",temp);
+				if(f!=0)
+					printf("f49:%s\n",mysql_error(&mysql));
+				bzero(temp,sizeof(temp));
+				sprintf(temp,"%s从%s仓库调拨%d份到%s成功",use->name,use->username,\
+						use->put_count,use->password);
+				Write(temp,accfd);
+
+			}
+			else
+			{
+				if(a == 0)
+				{
+					memset(&temp,0,sizeof(temp));
+					sprintf(temp,"%s从%s仓库调拨%d份到%s成功",use->name,use->username,\
+						use->put_count,use->password);
+					Write(temp,accfd);
+				}
+				else
+				{
+					memset(&temp,0,sizeof(temp));
+					sprintf(temp,"调拨失败");
+					Write(temp,accfd);	
+				}
+			}
 		}
 		else
 		{
-		
-			Outfoodnor(use,accfd);
 			memset(&temp,0,sizeof(temp));
-			sprintf(temp,"%s调拨%d份成功",use->name,use->put_count);
-			Write(temp,accfd);
+			sprintf(temp,"调拨失败");
+			Write(temp,accfd);	
 		}
 	}
-	else
+
+	if(strcmp(use->username,"kind2") == 0)
 	{
-		char temp[1024] = {0};
-		sprintf(temp,"update kind2 set count=count-%d where name= '%s'",use->put_count,use->name);
+		memset(&temp,0,sizeof(temp));	
+		sprintf(temp,"update kind2 set all_count=all_count-%d, put_count = %d, shipping_time = now() where name= '%s'",put,put,use->name);
 		printf("%s\n",temp);
 		int f = mysql_query(&mysql,temp);
 		if( f!= 0)
 		{
 			printf("%s\n",mysql_error(&mysql));
 			memset(&temp,0,sizeof(temp));
-			sprintf(temp,"调拨失败");
+			sprintf(temp,"此仓库没有所需货物，调拨失败");
 			Write(temp,accfd);
 		}
 		else
 		{
 			Addfoodnor(use,accfd);
 			memset(&temp,0,sizeof(temp));
-			sprintf(temp,"%s调拨%d份成功",use->name,use->put_count);
+			sprintf(temp,"%s从%s仓库调拨%d份到%s成功",use->name,use->username,use->put_count
+,use->password);
 			Write(temp,accfd);
 		}
 	}
@@ -509,7 +545,6 @@ int  Outfoodnor(USE *use,int accfd)
 { 
 	time_t t = time(NULL);
 	int time = t;
-	USE buf[1024] = {0};
 	char temp[1024] = {0};
 
 	sprintf(temp,"select *from %s",use->name);
@@ -518,7 +553,10 @@ int  Outfoodnor(USE *use,int accfd)
 	int f = mysql_query(&mysql,temp);
 	if( f!= 0)
 	{
-		return 0;
+		bzero(temp,sizeof(temp));
+		strcpy(temp,"此仓库没有所需的货物");
+		Write(temp,accfd);
+		return 1;
 	}
 
 	MYSQL_RES *res = NULL;
@@ -528,16 +566,17 @@ int  Outfoodnor(USE *use,int accfd)
 	res = mysql_store_result(&mysql);
 	if(res == NULL)
 	{
-		return 0;
+		return 1;
 	}
 
 	my_ulonglong row_l = 0; 
 	row_l = mysql_num_rows(res);
 	 if(row_l <= 0)
 	{
-			return 0;
+			return 2;
 		
 	}
+	USE buf[row_l] = {0};
 	while((row = mysql_fetch_row(res)) != NULL)
 	{
 		buf[i].all_count = atoi(row[2]);
@@ -569,32 +608,21 @@ int  Outfoodnor(USE *use,int accfd)
 		put = 0;
 	}
 	bzero(temp,sizeof(temp));
-	sprintf(temp,"update kind set put_count=put_count+%d,remain_count= all_count-put_count where name='%s'",put,use->name);
+	sprintf(temp,"update kind set put_count = put_count+%d,remain_count= all_count-put_count where name='%s'",put,use->name);
 	mysql_query(&mysql,temp);
 	return 0;
 }
 
-void  Addfoodnor(USE *use,int accfd)
+void Addfoodnor(USE *use,int accfd)
 {
-	char temp[1024] = {0};
-   	time_t t = time(NULL);
-	use->purchase_time = t;
-	sprintf(temp,"insert into %s values(0,'%s',%d,%d,%d,%d)",use->name,use->name,use->all_count,use->put_count,use->purchase_time,0);
-	strcpy(op.type,"进仓");
-	Oper();
-	int f=mysql_query(&mysql,temp);
-	if(f!=0)
-	{
-		printf("f:%s",mysql_error(&mysql));
-	}
-	else
+	char temp[1024] = {0}; 
+	sprintf(temp,"update kind set all_count=all_count + %d, remain_count =\
+			all_count - put_count where name= '%s'",use->put_count,use->name);
+	int s = mysql_query(&mysql,temp);
+	if (s != 0)
 	{
 		memset(&temp,0,sizeof(temp));
-		sprintf(temp,"update kind set all_count = all_count+%d , remain_count= all_count - put_count where name='%s'",use->all_count,use->name);
-		f=mysql_query(&mysql,temp);
-		if(f!=0)
-		{
-			printf("f1:%s",mysql_error(&mysql));
-		}
+		sprintf(temp,"insert into kind values('%s',7,0,%d,0,0)",use->name,use->put_count);
+		mysql_query(&mysql,temp);
 	}
 }

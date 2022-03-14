@@ -39,28 +39,34 @@ void * Rd(void*arg)
 		int ret =read(sockfd,buf,sizeof(buf));
 		if (ret < 0)
 		{
-			perror("read");
+			char str[520] = {0};
+			sprintf(str,"文件名：%s \t 函数名：%s \t 行号：%d\t",__FILE__,
+					__FUNCTION__,__LINE__);
+			Slip(str);
 		}
 		if(strcmp(buf,"log_in_success"))
-		puts(buf);
+			puts(buf);
 	}
 }
 
 void Read_find(int sockfd)
 {
-  int ret=0;
-  char buf[1024]={0};
-  ret=read(sockfd,buf,1023);
-  if(ret<0)
-  {
-   memset(buf,0,sizeof(buf));
-   sprintf(buf,"文件名：%s \t 函数名：%s \t 行号：%d\t",__FILE__,
-     __FUNCTION__,__LINE__);
-   Slip(buf);
-   exit(1); 
-  }
-  USE* use = (USE*)buf;
-  printf("货物位置：%d\t总进货量：%d\t总出货量：%d\t仓库剩余量：%d\n",use->place,use->all_count,use->put_count,use->remain_count);
+	int ret=0;
+	USE buf[1024]={0};
+	ret=read(sockfd,buf,1023);
+	if(ret<0)
+	{
+		char str[520] = {0};
+		sprintf(str,"文件名：%s \t 函数名：%s \t 行号：%d\t",__FILE__,
+				__FUNCTION__,__LINE__);
+		Slip(str);
+	}
+
+	for (int i=0;i<buf[1].batch;i++ )
+	{
+		printf("name:%s  place：%d  all_count：%d  put_count：%d remain_count：%d\n",
+				buf[i].name,buf[i].place,buf[i].all_count,buf[i].put_count,buf[i].remain_count);
+	}
 }
 
 //注册
@@ -173,13 +179,10 @@ void Clear_Food(USE *use, HEAD *head,int accfd)
 }
 
 //查询客户端
-void Find_Food(USE *use, HEAD *head,int accfd)
+void Find_Food(HEAD *head,int accfd)
 {
  char buf[1024] = {0};
- printf("请输入查询货物名称：\n");
- scanf("%s",use->name);
  memcpy(buf,head,sizeof(HEAD));
- memcpy(buf+sizeof(HEAD),use,sizeof(USE));
  Write(buf,accfd);
 }
 
@@ -200,11 +203,19 @@ void Allot_food(USE *use, HEAD *head,int accfd)
 	printf("请输入需要调拨货物名称：\n");
 	scanf("%s",use->name);
 	printf("请输入需要调拨货物数量：\n");
-	scanf("%d",&use->put_count);
+	while(1)
+	{
+		int c=scanf("%d",&use->put_count);
+		while(getchar()!='\n');
+		if(c!=1)
+			puts("请输入正确的数字");
+		else
+			break;
+	}
 	printf("请输入出仓名称：\n");
-	scanf("%d",&use->all_count);
+	scanf("%s",use->username);
 	printf("请输入进仓名称：\n");
-	scanf("%d",&use->remain_count);
+	scanf("%s",use->password);
 	memcpy(buf,head,sizeof(HEAD));
 	memcpy(buf+sizeof(HEAD),use,sizeof(USE));
 	Write(buf,accfd);
