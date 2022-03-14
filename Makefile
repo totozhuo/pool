@@ -23,4 +23,4 @@ server:$(OBJS)
 
 .PHONY:
 clean:
-		rm -rf $(OBJS) server client *.o
+		rm -rf $(OBJS) server client  staff *.o

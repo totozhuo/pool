@@ -61,7 +61,7 @@ void* do_work(void* arg);
 void RegisterFunc(USE *use ,DT *node);
 void* write_work(void* arg);
 void* listen_work(void* arg);
-void* heart_check(void* arg);
+void heart_check();
 void* check_handler(void* arg);
 void* heart_work(void* arg);
 

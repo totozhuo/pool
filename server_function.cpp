@@ -13,8 +13,9 @@
 
 using namespace std;
 extern MYSQL mysql;
-OP op={0};
-//读取文件
+OP op={0},ov={0};
+
+//读取服务器信息
 int Read(int sockfd)
 {
 		int ret=0;
@@ -33,12 +34,10 @@ int Read(int sockfd)
 
 		if(strcmp(buf,"log_in_success")==0)
 			return 0;
-		if(strcmp(buf,"exit")==0)
-			return -1;
 		return 2;
 }	
 
-//向服务器发送文件
+//向服务器发送信息
 void Write(char *buf,int sockfd)
 {
 	int ret=0;
@@ -66,7 +65,7 @@ void Oper()
 	}
 }
 
-//登录判断
+//登录
 void Log_In_Find(USE *use,int accfd)
 {
 	char m[1024]={0};
@@ -74,6 +73,9 @@ void Log_In_Find(USE *use,int accfd)
 	strcpy(op.name,use->username);
 	strcpy(op.type,"登录");
 	Oper();
+	if(strcmp(use->username,"yuangong")==0)
+		strcpy(ov.name,use->username);
+		
 	int f=mysql_query(&mysql,m);
 	if(f!=0)
 	{
@@ -140,7 +142,7 @@ void  AddNemfood(USE *use,int accfd)
 void  Addfood(USE *use,int accfd)
 {
 	char temp[1024] = {0};
-   	time_t t = time(NULL);
+	time_t t = time(NULL);
 	use->purchase_time = t;
 	sprintf(temp,"insert into %s values(0,'%s',%d,%d,%d,%d)",use->name,use->name,use->all_count,use->put_count,use->purchase_time,0);
 	strcpy(op.type,"进仓");
@@ -159,80 +161,52 @@ void  Addfood(USE *use,int accfd)
 		sprintf(temp,"update kind set all_count = all_count+%d , remain_count= all_count - put_count where name='%s'",use->all_count,use->name);
 		f=mysql_query(&mysql,temp);
 		if(f!=0)
-		{	char m[1024]={0};
-	sprintf(m,"select *from pw where username = '%s' and password = '%s'",use->username,use->password);
-	int f=mysql_query(&mysql,m);
-	if(f!=0)
-	{
-		printf("m:%s\n",mysql_error(&mysql));
-		exit(1);
-	}
-
-	MYSQL_RES *res=NULL;
-	MYSQL_ROW row;
-
-	res=mysql_store_result(&mysql);
-	if(res==NULL)
-	{
-		printf("res:%s\n",mysql_error(&mysql));
-		exit(1);
-	}
-	
-	row=mysql_fetch_row(res);
-	if (row>0)
-	{
-		memset(m,0,sizeof(m));
-		strcpy(m,"log_in_success");
-		Write(m,accfd);
-	}
-	else
-	{
-		memset(m,0,sizeof(m));
-		strcpy(m,"登录失败");
-		Write(m,accfd);
-	}
-
+		{
 			printf("f1:%s",mysql_error(&mysql));
 		}
 		memset(&temp,0,sizeof(temp));
 		strcpy(temp,"进仓成功");
 		Write(temp,accfd);
-		
-		char sql[1024]={0};
-		sprintf(sql,"select *from kind where username = '%s'",use->username);
-		int f=mysql_query(&mysql,sql);
-		if(f!=0)
-		{
-			printf("m:%s\n",mysql_error(&mysql));
-			exit(1);
+
+
+		if(!strcmp(ov.name,"yuangong"))	
+		{	
+			char sql[1024]={0};
+			sprintf(sql,"select *from kind where name = '%s'",use->name);
+			int f=mysql_query(&mysql,sql);
+			if(f!=0)
+			{
+				printf("m:%s\n",mysql_error(&mysql));
+				exit(1);
+			}
+
+			MYSQL_RES *res=NULL;
+			MYSQL_ROW row;
+
+			res=mysql_store_result(&mysql);
+			if(res==NULL)
+			{
+				printf("res:%s\n",mysql_error(&mysql));
+				exit(1);
+			}
+
+			int time;
+			row=mysql_fetch_row(res);
+			if (row>0)
+				time = atoi(row[1]);
+
+			//accfd time use->name use->all_count	
+			TIME *message = (TIME*)malloc(sizeof(TIME));
+			message->fd = accfd;
+			message->time = time;
+			strcpy(message->name,use->name);
+			message->all_count = use->all_count;
+
+			//创建监控线程
+			pthread_t tid = 0;
+			pthread_create(&tid,NULL,listen_work,(void*)message);//分离后不使用tid
+			pthread_detach(tid);
 		}
-
-		MYSQL_RES *res=NULL;
-		MYSQL_ROW row;
-
-		res=mysql_store_result(&mysql);
-		if(res==NULL)
-		{
-			printf("res:%s\n",mysql_error(&mysql));
-			exit(1);
-		}
-
-		int time;
-		row=mysql_fetch_row(res);
-		if (row>0)
-			time = atoi(row[1]);
-		
-		//accfd time use->name use->all_count	
-		TIME *message = (TIME*)malloc(sizeof(TIME));
-		message->fd = accfd;
-		message->time = time;
-		strcpy(message->name,use->name);
-		message->all_count = use->all_count;
-
-		//创建监控线程
-		pthread_t tid = 0;
-		pthread_create(&tid,NULL,listen_work,(void*)message);//分离后不使用tid
-		pthread_detach(tid);
 	}
 }
 
@@ -357,36 +331,38 @@ void ClearFood(USE *use,int accfd)
 //查询服务器
 void  Findfood(USE *use,int accfd)
 {
- 	char temp[1024] = {0};
-	 sprintf(temp,"select *from kind where name= '%s'",use->name);
-	 printf("%s\n",temp);
-	 int f = mysql_query(&mysql,temp);
-	 if( f!= 0)
- 	{
-  		printf("%s\n",mysql_error(&mysql));
-		
-	 }
- 	MYSQL_RES *res = NULL;
- 	res = mysql_store_result(&mysql);
- 	if(res == NULL)
- 	{
- 	 printf("%s\n",mysql_error(&mysql));
- 	 exit(1);
- 	}
-	 my_ulonglong row_l = 0;   //行
- 	MYSQL_ROW row;
- 	row_l = mysql_num_rows(res); 
- 	row = mysql_fetch_row(res);     
- 	if(row_l > 0)
-	 {
-  		use->place = atoi(row[2]);
-  		use->all_count = atoi(row[3]);
- 		use->put_count = atoi(row[4]);
- 		use->remain_count = atoi(row[5]);
- 		bzero(temp,sizeof(temp));
+	char temp[1024] = {0};
+	sprintf(temp,"select *from kind where name= '%s'",use->name);
+	printf("%s\n",temp);
+	strcpy(op.type,"查询");
+	Oper();
+	int f = mysql_query(&mysql,temp);
+	if( f!= 0)
+	{
+		printf("%s\n",mysql_error(&mysql));
+
+	}
+	MYSQL_RES *res = NULL;
+	res = mysql_store_result(&mysql);
+	if(res == NULL)
+	{
+		printf("%s\n",mysql_error(&mysql));
+		exit(1);
+	}
+	my_ulonglong row_l = 0;   //行
+	MYSQL_ROW row;
+	row_l = mysql_num_rows(res); 
+	row = mysql_fetch_row(res);     
+	if(row_l > 0)
+	{
+		use->place = atoi(row[2]);
+		use->all_count = atoi(row[3]);
+		use->put_count = atoi(row[4]);
+		use->remain_count = atoi(row[5]);
+		bzero(temp,sizeof(temp));
 		memcpy(temp,use,sizeof(USE));
-  		Write(temp,accfd);
-	 }
+		Write(temp,accfd);
+	}
 }
 
 //获取仓库的余量
@@ -427,6 +403,8 @@ void  SmartInfood(USE *use,int accfd)
 	char temp[1024] = {0};
 
 	sprintf(temp,"select *from %s",use->name);
+	strcpy(op.type,"智能进货");
+	Oper();
 	int f = mysql_query(&mysql,temp);
 	if( f!= 0)
 	{
@@ -479,6 +457,8 @@ void  SmartInfood(USE *use,int accfd)
 //调拨
 void  Allotfood(USE *use,int accfd)
 {
+	strcpy(op.type,"调拨");
+	Oper();
 	if(use->all_count < use->remain_count)
 	{
 		char temp[1024] = {0};
