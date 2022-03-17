@@ -257,9 +257,33 @@ void* listen_work(void* arge)
 {
 	TIME *arg = (TIME*)arge;
 	sleep(arg->time);
+	
+	char sql[1024]={0};
+	sprintf(sql,"select *from kind where name = '%s'",arg->name);
+	int f=mysql_query(&mysql,sql);
+	if(f!=0)
+	{
+		printf("f180:%s\n",mysql_error(&mysql));
+		exit(1);
+	}
+
+	MYSQL_RES *res=NULL;
+	MYSQL_ROW row;
+
+	res=mysql_store_result(&mysql);
+	if(res==NULL)
+	{
+		printf("res:%s\n",mysql_error(&mysql));
+		exit(1);
+	}
+
+	int num;
+	row=mysql_fetch_row(res);
+	if (row>0)
+		num = atoi(row[5]);
 
 	char tmp[1024] = {0};
-	sprintf(tmp,"%s过期%d箱,请报废",arg->name,arg->all_count);
+	sprintf(tmp,"%s过期%d箱,请报废",arg->name,num);
 	write(arg->fd,tmp,sizeof(tmp));
 	free(arg);
 	pthread_exit(NULL);

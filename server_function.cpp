@@ -1,12 +1,12 @@
 /*************************************************************************
-    > File Name: function.cpp
+> File Name: function.cpp
 # File Name: function.cpp
 # Author : 李卓，苟涛，马彦荣 
 # QQ : 1684615293
 # Email:1684615293@qq.com
 # Created Time: 2022年03月01日 星期二 10时53分28秒
 # 描述：                   
- ************************************************************************/
+************************************************************************/
 
 #include "head.h"
 #include "function.h"
@@ -396,7 +396,7 @@ int Get_remarn(USE *use)
 	row = mysql_fetch_row(res);
 	if(row_l > 0)
 	{
-		num = atoi(row[0]);
+		num = atoi(row[5]);
 	}
 	return num;
 }
@@ -626,5 +626,3 @@ void Addfoodnor(USE *use,int accfd)
 		mysql_query(&mysql,temp);
 	}
 }
-
-
