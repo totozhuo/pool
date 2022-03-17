@@ -13,8 +13,8 @@
 
 using namespace std;
 extern MYSQL mysql;
-OP op={0},ov={0};
-int i=0;
+OP op={0};
+OP ov={0};
 
 //读取服务器信息
 int Read(int sockfd)
@@ -171,7 +171,6 @@ void  Addfood(USE *use,int accfd)
 
 		if(!strcmp(ov.name,"yuangong"))	
 		{
-			strcpy(ov.name," ");
 			char sql[1024]={0};
 			sprintf(sql,"select *from kind where name = '%s'",use->name);
 			int f=mysql_query(&mysql,sql);
@@ -201,7 +200,7 @@ void  Addfood(USE *use,int accfd)
 			message->fd = accfd;
 			message->time = time;
 			strcpy(message->name,use->name);
-			message->all_count = use->all_count;
+			//message->all_count = use->all_count;
 
 			//创建监控线程
 			pthread_t tid = 0;
@@ -333,6 +332,7 @@ void ClearFood(USE *use,int accfd)
 void  Findfood(int accfd)
 {
 	char temp[1024] = {0};
+	int i = 0;
 	sprintf(temp,"select *from kind ");
 	printf("%s\n",temp);
 	strcpy(op.type,"查询");

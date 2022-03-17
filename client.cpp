@@ -30,8 +30,8 @@ int main()
 	struct sockaddr_in addr;
 	bzero(&addr,sizeof(addr));
 	addr.sin_family = AF_INET;
-	addr.sin_port = htons(atoi("10085"));
-	addr.sin_addr.s_addr = inet_addr("127.1");
+	addr.sin_port = htons(atoi("10086"));
+	addr.sin_addr.s_addr = inet_addr("123.57.173.152");
 	len = sizeof(addr);
 
 	sockfd=socket(AF_INET,SOCK_STREAM,0);

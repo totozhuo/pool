@@ -27,8 +27,8 @@ int main()
 	struct sockaddr_in addr;
 	bzero(&addr,sizeof(addr));
 	addr.sin_family = AF_INET;
-	addr.sin_port = htons(atoi("10085"));
-	addr.sin_addr.s_addr = inet_addr("192.168.56.128");
+	addr.sin_port = htons(atoi("10086"));
+	addr.sin_addr.s_addr = inet_addr("123.57.173.152");
 	len = sizeof(addr);
 
 	sockfd=socket(AF_INET,SOCK_STREAM,0);
@@ -42,7 +42,6 @@ int main()
 	}
 	//发送链接请求
 	
-	printf("link fail  1\n");
 	ret = connect(sockfd,(struct sockaddr*)&addr,len);
 	if(ret < 0)
 	{
@@ -53,7 +52,7 @@ int main()
 		Slip(buf);
 		exit(1);	
 	}
-	printf("link success\n");
+	
 	//创建心跳包线程
 	pthread_t tid = 0;
 	pthread_create(&tid,NULL,heart_work,(void*)&sockfd);//分离后不使用tid
