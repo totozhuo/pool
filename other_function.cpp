@@ -82,8 +82,8 @@ void* recv_work(void* arg)
 	bzero(&seraddr,sizeof(seraddr));
 
 	seraddr.sin_family = AF_INET;
-	seraddr.sin_port = htons(atoi("10085"));
-	seraddr.sin_addr.s_addr = inet_addr("127.1");
+	seraddr.sin_port = htons(atoi("10086"));
+	seraddr.sin_addr.s_addr = inet_addr("172.31.99.226");
 	socklen_t len = sizeof(seraddr);
 
 	reval = bind(sockfd,(struct sockaddr*)&seraddr,len);
@@ -126,6 +126,8 @@ void* recv_work(void* arg)
 	
 	threadpool_destroy(pool);
 	close(sockfd);
+	sleep(1);
+	raise(SIGKILL);
 	
 	return NULL;
 }
@@ -138,7 +140,7 @@ void heart_check()
 void* check_handler(void* arg)
 {
 	int accfd = *(int*)arg;
-	while(1)
+	while(iserver)
 	{
 		count++;
 		sleep(1);
@@ -255,6 +257,7 @@ void* listen_work(void* arge)
 {
 	TIME *arg = (TIME*)arge;
 	sleep(arg->time);
+
 	char tmp[1024] = {0};
 	sprintf(tmp,"%s过期%d箱,请报废",arg->name,arg->all_count);
 	write(arg->fd,tmp,sizeof(tmp));
